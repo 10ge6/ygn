@@ -1,2 +1,3 @@
-usage: `python3 jff2tabular.py [file]`
+usage:
+```$ python3 jff2tabular.py [file]```
 
