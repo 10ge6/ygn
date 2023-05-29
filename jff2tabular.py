@@ -38,14 +38,8 @@ if tm.xpath('/automaton/transition/read[1][not(text())]'):
 
 table.append(symbols_header)
 
-for x in range(len(symbols_header)):
-    print(table[0][x],end=' ')
-print()
-print(reads)
-
 for child in tm:
     if child.tag == "state":
-        #print(child.attrib.get('id')+' '+child.attrib.get('name'))
         table.append(['\\(-\\)' for _ in range(len(reads)+1)])
         state_count += 1
         table[state_count][0] = '\\('+child.attrib.get('name')+'\\)'
@@ -65,7 +59,6 @@ for child in tm:
             elif val.tag == "write":
                 transition_str += '\\square,'
         transition_str = '\\)'.join(transition_str.rsplit(',', 1))
-        print(str(table_y) + ' ' + str(table_x))
         table[table_y][table_x] = transition_str
     else:
         print("ATTEMPTED TO PARSE MALFORMATTED XML INPUT!")
