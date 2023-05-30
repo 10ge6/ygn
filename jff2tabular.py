@@ -54,8 +54,10 @@ for child in tm:
                 if not isinstance(val.text, str):
                     val.text = "\\square"
                 table_x = reads[val.text]+1
-            elif (val.tag == "write" and isinstance(val.text, str)) or val.tag in {"to","move"}:
+            elif (val.tag == "write" and isinstance(val.text, str)) or val.tag == "move":
                 transition_str += (val.text + ',')
+            elif val.tag == "to":
+                transition_str += (table[int(val.text)+1][0][2:-2] + ',')
             elif val.tag == "write":
                 transition_str += '\\square,'
         transition_str = '\\)'.join(transition_str.rsplit(',', 1))
