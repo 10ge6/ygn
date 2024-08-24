@@ -38,18 +38,27 @@ if tm.xpath('/automaton/transition/read[1][not(text())]'):
 
 table.append(symbols_header)
 
+prev = -1
+missing = 0
+pairs = {}
+
 for child in tm:
     if child.tag == "state":
         table.append(['\\(-\\)' for _ in range(len(reads)+1)])
         state_count += 1
+        if int(child.attrib.get('id')) - prev != 1:
+            missing += int(child.attrib.get('id')) - prev - 1
+        pairs[int(child.attrib.get('id'))] = missing
         table[state_count][0] = '\\('+child.attrib.get('name')+'\\)'
+        prev = int(child.attrib.get('id'))
     elif child.tag == "transition":
         transition_str = '\\('
         table_x = -1
         table_y = -1
         for val in child:
             if val.tag == "from":
-                table_y = int(val.text)+1
+                delta = pairs.get(int(val.text))
+                table_y = int(val.text)+1-delta
             elif val.tag == "read":
                 if not isinstance(val.text, str):
                     val.text = "\\square"
@@ -57,7 +66,9 @@ for child in tm:
             elif (val.tag == "write" and isinstance(val.text, str)) or val.tag == "move":
                 transition_str += (val.text + ',')
             elif val.tag == "to":
-                transition_str += (table[int(val.text)+1][0][2:-2] + ',')
+                delta = pairs.get(int(val.text))
+                index = int(val.text)+1-delta
+                transition_str += (table[index][0][2:-2] + ',')
             elif val.tag == "write":
                 transition_str += '\\square,'
         transition_str = '\\)'.join(transition_str.rsplit(',', 1))
